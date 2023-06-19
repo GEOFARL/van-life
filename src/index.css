@@ -160,10 +160,10 @@ header a:hover {
   justify-items: center;
 }
 
-/* .van-tile a {
+.van-tile a {
   color: #161616;
   text-decoration: none;
-} */
+}
 
 .van-tile img {
   max-width: 100%;
