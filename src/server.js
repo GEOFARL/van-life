@@ -1,4 +1,4 @@
-import { createServer, Model } from 'miragejs';
+const { createServer, Model } = require('miragejs');
 
 createServer({
   models: {
