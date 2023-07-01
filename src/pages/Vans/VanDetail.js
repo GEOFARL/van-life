@@ -26,7 +26,12 @@ export const VanDetail = () => {
         relative="path"
         className="back-button"
       >
-        &larr; <span>Back to all vans</span>
+        &larr;{' '}
+        <span>
+          Back to{' '}
+          {location.state && location.state.type ? location.state.type : 'all'}{' '}
+          vans
+        </span>
       </Link>
       {van ? (
         <div className="van-detail">
