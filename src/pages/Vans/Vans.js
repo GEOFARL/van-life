@@ -6,14 +6,20 @@ export const Vans = () => {
   const [vans, setVans] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const typeFilter = searchParams.get('type');
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const vans = await getVans();
-      setVans(vans);
-      setLoading(false);
+      try {
+        const vans = await getVans();
+        setVans(vans);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
@@ -21,30 +27,38 @@ export const Vans = () => {
     ? vans.filter((van) => van.type === typeFilter)
     : vans;
 
-  const vanElements = displayedVans.map((van) => (
-    <div key={van.id} className="van-tile">
-      <Link
-        to={`${van.id}`}
-        state={{
-          search: searchParams.toString(),
-          type: typeFilter,
-        }}
-      >
-        <img src={van.imageUrl} alt="van" />
-        <div className="van-info">
-          <h3>{van.name}</h3>
-          <p>
-            ${van.price}
-            <span>/day</span>
-          </p>
-        </div>
-        <i className={`van-type ${van.type} selected`}>{van.type}</i>
-      </Link>
-    </div>
-  ));
+  let vanElements;
+  if (displayedVans) {
+    vanElements = displayedVans.map((van) => (
+      <div key={van.id} className="van-tile">
+        <Link
+          to={`${van.id}`}
+          state={{
+            search: searchParams.toString(),
+            type: typeFilter,
+          }}
+        >
+          <img src={van.imageUrl} alt="van" />
+          <div className="van-info">
+            <h3>{van.name}</h3>
+            <p>
+              ${van.price}
+              <span>/day</span>
+            </p>
+          </div>
+          <i className={`van-type ${van.type} selected`}>{van.type}</i>
+        </Link>
+      </div>
+    ));
+  }
 
   if (loading) {
     return <h1>Loading...</h1>;
+  }
+
+  if (error) {
+    console.error(error.message);
+    return <h1>There was an error: {error.message}</h1>;
   }
 
   return (
