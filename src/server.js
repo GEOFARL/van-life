@@ -80,7 +80,7 @@ createServer({
 
     this.get('/vans', (schema, request) => {
       const rand = Math.random();
-      if (rand > 0.8) {
+      if (rand > 0.95) {
         return new Response(400, {}, { error: 'Error fetching data' });
       }
       return schema.vans.all();
