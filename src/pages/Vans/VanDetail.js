@@ -1,14 +1,35 @@
-import React from 'react';
-import { Link, useLoaderData, useLocation } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import {
+  Await,
+  Link,
+  defer,
+  useLoaderData,
+  useLocation,
+} from 'react-router-dom';
 import { getVans } from '../../api';
 
 export const loader = ({ params }) => {
-  return getVans(params.id);
+  return defer({ van: getVans(params.id) });
 };
 
 export const VanDetail = () => {
   const location = useLocation();
-  const van = useLoaderData();
+  const dataPromise = useLoaderData();
+
+  const renderVan = (van) => {
+    return (
+      <>
+        <img src={van.imageUrl} alt="van" />
+        <i className={`van-type ${van.type} selected`}>{van.type}</i>
+        <h2>{van.name}</h2>
+        <p className="van-price">
+          <span>${van.price}</span>/day
+        </p>
+        <p>{van.description}</p>
+        <button className="link-button">Rent this van</button>
+      </>
+    );
+  };
 
   return (
     <div className="van-detail-container">
@@ -25,14 +46,9 @@ export const VanDetail = () => {
         </span>
       </Link>
       <div className="van-detail">
-        <img src={van.imageUrl} alt="van" />
-        <i className={`van-type ${van.type} selected`}>{van.type}</i>
-        <h2>{van.name}</h2>
-        <p className="van-price">
-          <span>${van.price}</span>/day
-        </p>
-        <p>{van.description}</p>
-        <button className="link-button">Rent this van</button>
+        <Suspense fallback={<h2>Loading...</h2>}>
+          <Await resolve={dataPromise.van}>{renderVan}</Await>
+        </Suspense>
       </div>
     </div>
   );
