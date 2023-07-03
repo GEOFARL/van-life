@@ -17,13 +17,19 @@ export const action = async ({ request }) => {
   const formData = await request.formData();
   const email = formData.get('email');
   const password = formData.get('password');
+
+  let redirectTo = new URL(request.url).searchParams.get('redirectTo');
+  if (!redirectTo) {
+    redirectTo = '/host';
+  }
+
   try {
     await loginUser({ email, password });
   } catch (err) {
     return err.message;
   }
   localStorage.setItem('loggedIn', true);
-  const response = redirect('/host');
+  const response = redirect(redirectTo);
   response.body = true;
   return response;
 };
@@ -32,7 +38,6 @@ export const Login = () => {
   const message = useLoaderData();
   const errorMessage = useActionData();
   const navigation = useNavigation();
-  console.log(navigation);
 
   return (
     <div className="login-container">
