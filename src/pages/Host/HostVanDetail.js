@@ -7,12 +7,12 @@ import {
   defer,
   Await,
 } from 'react-router-dom';
-import { getHostVans } from '../../api';
+import { getVan } from '../../api';
 import { requireAuth } from '../../utils';
 
 export const loader = async ({ params, request }) => {
   await requireAuth(request);
-  return defer({ hostVans: getHostVans(params.id) });
+  return defer({ hostVans: getVan(params.id) });
 };
 
 export function HostVanDetail() {
